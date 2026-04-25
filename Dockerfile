@@ -23,7 +23,7 @@ WORKDIR /app/backend
 RUN npm install --production
 
 # Copy frontend static build
-COPY --from=frontend-builder /app/dist ./backend/public
+COPY --from=frontend-builder /app/dist ./public
 
 # Expose port
 EXPOSE 5001
