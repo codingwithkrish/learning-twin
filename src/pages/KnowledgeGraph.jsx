@@ -44,7 +44,7 @@ const KnowledgeGraph = ({ onNavigate }) => {
   const selectedConcept = concepts.find(c => c.title === selectedNode);
 
   return (
-    <div className="h-screen flex animate-in slide-in-from-right duration-700">
+    <main aria-label="Knowledge Graph View" className="h-screen flex animate-in slide-in-from-right duration-700">
       {/* Graph Area */}
       <div className="flex-1 relative bg-surface-lowest p-8 flex flex-col">
         <header className="flex justify-between items-center mb-8">
@@ -54,14 +54,16 @@ const KnowledgeGraph = ({ onNavigate }) => {
           </div>
           <div className="flex gap-2">
             <div className="relative">
+              <label htmlFor="graph-search" className="sr-only">Search concepts</label>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface/30" size={16} />
               <input 
+                id="graph-search"
                 type="text" 
                 placeholder="Search concepts..." 
                 className="bg-surface-container border border-white/5 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-primary-indigo/50"
               />
             </div>
-            <button className="p-2 bg-surface-container rounded-full text-on-surface/50 hover:text-white">
+            <button aria-label="Filter Graph" className="p-2 bg-surface-container rounded-full text-on-surface/50 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-indigo">
               <Filter size={18} />
             </button>
           </div>
@@ -124,10 +126,10 @@ const KnowledgeGraph = ({ onNavigate }) => {
       </div>
 
       {/* Details Panel */}
-      <div className="w-96 bg-surface-lowest border-l border-white/5 p-6 flex flex-col space-y-6">
+      <aside aria-label="Concept Details" className="w-96 bg-surface-lowest border-l border-white/5 p-6 flex flex-col space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Details</h2>
-          <button className="text-on-surface/30 hover:text-white">
+          <button aria-label="More Info" className="text-on-surface/30 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-indigo rounded-full">
             <Info size={20} />
           </button>
         </div>
@@ -186,8 +188,8 @@ const KnowledgeGraph = ({ onNavigate }) => {
             <span>Quick Quiz</span>
           </button>
         </div>
-      </div>
-    </div>
+      </aside>
+    </main>
   );
 };
 

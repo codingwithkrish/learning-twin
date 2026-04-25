@@ -26,7 +26,7 @@ const Sidebar = ({ activePage, setActivePage, onNewSession }) => {
   ];
 
   return (
-    <div className="w-64 h-screen bg-surface-lowest border-r border-white/5 flex flex-col p-4">
+    <aside aria-label="Main Navigation" className="w-64 h-screen bg-surface-lowest border-r border-white/5 flex flex-col p-4">
       {/* Brand */}
       <div className="flex items-center gap-3 px-2 mb-10">
         <div className="w-10 h-10 bg-primary-indigo rounded-xl flex items-center justify-center">
@@ -39,7 +39,7 @@ const Sidebar = ({ activePage, setActivePage, onNewSession }) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-2">
+      <nav aria-label="Primary" className="flex-1 space-y-2">
         {navItems.map((item) => (
           <button
             key={item.id}
@@ -51,7 +51,7 @@ const Sidebar = ({ activePage, setActivePage, onNewSession }) => {
                 : "text-on-surface/60 hover:bg-surface-container hover:text-on-surface"
             )}
           >
-            <item.icon size={20} />
+            <item.icon size={20} aria-hidden="true" />
             <span className="font-medium">{item.label}</span>
           </button>
         ))}
@@ -85,7 +85,7 @@ const Sidebar = ({ activePage, setActivePage, onNewSession }) => {
           <span className="font-medium">Logout</span>
         </button>
       </div>
-    </div>
+    </aside>
   );
 };
 

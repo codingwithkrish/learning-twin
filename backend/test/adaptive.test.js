@@ -1,11 +1,11 @@
 /**
  * Unit tests for Adaptive Learning Logic
  */
-const adaptiveService = require('../services/adaptive.service');
-const KnowledgeGraph = require('../models/KnowledgeGraph');
+const adaptiveService = require('../src/services/adaptive.service');
+const KnowledgeGraph = require('../src/models/KnowledgeGraph');
 
 // Mocking KnowledgeGraph model
-jest.mock('../models/KnowledgeGraph');
+jest.mock('../src/models/KnowledgeGraph');
 
 describe('AdaptiveService', () => {
   test('should increase mastery for correct and confident responses', async () => {

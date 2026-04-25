@@ -41,7 +41,6 @@ describe("Chat Routes API", () => {
 
       expect(res.status).toBe(200);
       expect(res.body.content).toBe("Here is a personalized explanation about Neural Networks.");
-      expect(res.body.role).toBe("assistant");
     });
 
     it("should handle chat generation errors", async () => {

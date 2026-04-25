@@ -37,7 +37,7 @@ const Quiz = () => {
 
   if (phase === 'setup') {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#0a0a0f] p-8 animate-in zoom-in-95 duration-500">
+      <main aria-label="Configure Quiz" className="h-screen flex items-center justify-center bg-[#0a0a0f] p-8 animate-in zoom-in-95 duration-500">
         <Card className="w-full max-w-md p-10 bg-surface-lowest">
           <div className="flex items-center gap-3 mb-8">
             <BrainCircuit className="text-primary-indigo" size={28} />
@@ -46,8 +46,9 @@ const Quiz = () => {
           
           <div className="space-y-6">
             <div>
-              <label className="text-xs font-tech text-on-surface/50 uppercase tracking-widest mb-2 block">Select Topic</label>
+              <label htmlFor="topic-select" className="text-xs font-tech text-on-surface/50 uppercase tracking-widest mb-2 block">Select Topic</label>
               <select 
+                id="topic-select"
                 value={topic} 
                 onChange={e => setTopic(e.target.value)}
                 className="w-full bg-surface-container border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary-indigo"
@@ -86,6 +87,8 @@ const Quiz = () => {
                 <span className="text-primary-indigo font-bold">{numQuestions}</span>
               </div>
               <input 
+                id="question-count"
+                aria-label="Number of questions"
                 type="range" 
                 min="1" max="20" 
                 value={numQuestions} 
@@ -104,16 +107,16 @@ const Quiz = () => {
             </button>
           </div>
         </Card>
-      </div>
+      </main>
     );
   }
 
   if (phase === 'loading') {
     return (
-      <div className="h-screen flex flex-col items-center justify-center bg-[#0a0a0f] space-y-6">
+      <main aria-live="polite" aria-busy="true" className="h-screen flex flex-col items-center justify-center bg-[#0a0a0f] space-y-6">
         <div className="w-16 h-16 border-4 border-primary-indigo/20 border-t-primary-indigo rounded-full animate-spin" />
         <p className="text-xl font-tech text-primary-indigo animate-pulse">Generating your custom quiz with Gemini...</p>
-      </div>
+      </main>
     );
   }
 
@@ -139,7 +142,7 @@ const Quiz = () => {
     };
 
     return (
-      <div className="h-screen flex flex-col bg-[#0a0a0f] p-8 space-y-8 animate-in fade-in duration-500">
+      <main aria-label="Active Quiz Session" className="h-screen flex flex-col bg-[#0a0a0f] p-8 space-y-8 animate-in fade-in duration-500">
         <header className="flex justify-between items-end">
           <div>
             <span className="text-xs font-tech text-primary-indigo uppercase tracking-widest font-bold">{topic} - {difficulty}</span>
@@ -153,7 +156,7 @@ const Quiz = () => {
           </div>
         </header>
 
-        <div className="flex-1 flex items-center justify-center">
+        <section aria-label="Question Content" className="flex-1 flex items-center justify-center">
           <Card className="w-full max-w-2xl p-10 space-y-8 bg-surface-lowest">
             <div className="flex gap-4">
               <div className="w-10 h-10 bg-primary-indigo/10 rounded-xl flex items-center justify-center text-primary-indigo flex-shrink-0">
@@ -181,10 +184,11 @@ const Quiz = () => {
                 return (
                   <button 
                     key={i}
+                    aria-pressed={isSelected}
                     onClick={() => !isChecked && setSelectedOption(opt)}
                     disabled={isChecked}
                     className={clsx(
-                      "w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center justify-between",
+                      "w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-primary-indigo",
                       stateClass
                     )}
                   >
@@ -216,14 +220,14 @@ const Quiz = () => {
               )}
             </div>
           </Card>
-        </div>
-      </div>
+        </section>
+      </main>
     );
   }
 
   if (phase === 'results') {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#0a0a0f] animate-in zoom-in-95 duration-500">
+      <main aria-label="Quiz Results" className="h-screen flex items-center justify-center bg-[#0a0a0f] animate-in zoom-in-95 duration-500">
         <Card className="w-full max-w-md p-10 text-center space-y-6">
           <div className="w-20 h-20 bg-secondary/10 rounded-full flex items-center justify-center text-secondary mx-auto mb-4">
             <CheckCircle2 size={40} />
@@ -245,7 +249,7 @@ const Quiz = () => {
             Start Another Quiz
           </button>
         </Card>
-      </div>
+      </main>
     );
   }
 
