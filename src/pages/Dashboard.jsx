@@ -35,14 +35,14 @@ const Dashboard = ({ onNavigate }) => {
   
   const weakNodes = concepts.filter(c => c.isWeakNode);
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-700">
-      <header>
+    <main aria-label="Main Dashboard" className="p-8 space-y-8 animate-in fade-in duration-700">
+      <header aria-label="Dashboard Welcome">
         <h1 className="text-3xl font-bold mb-2">Good morning, Krish. Ready to evolve?</h1>
         <p className="text-on-surface/50">Your cognitive double has prepared fresh insights on your weak areas today.</p>
       </header>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section aria-label="Key Performance Indicators" className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card title="LEARNING STREAK" icon={Flame}>
           <div className="flex items-baseline gap-2 mt-2">
             <span className="text-5xl font-bold text-primary-indigo">12</span>
@@ -71,12 +71,12 @@ const Dashboard = ({ onNavigate }) => {
           </div>
           <p className="text-xs text-on-surface/50 mt-6 italic">Recommended: 75min Deep Dive</p>
         </Card>
-      </div>
+      </section>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Col - Session Resume */}
-        <div className="lg:col-span-2 space-y-6">
+        <section aria-label="Active Learning Focus" className="lg:col-span-2 space-y-6">
           <Card 
             className="border-primary-indigo/30 bg-gradient-to-br from-surface-container to-background"
             glow
@@ -119,17 +119,17 @@ const Dashboard = ({ onNavigate }) => {
               ))}
             </div>
           </Card>
-        </div>
+        </section>
 
         {/* Right Col - Feed & Insights */}
-        <div className="space-y-6">
+        <aside aria-label="Personalized Feed" className="space-y-6">
           <Card title="Daily Challenges">
             <div className="space-y-4">
               {[
                 { title: 'Quantum Q&A', tag: 'EASY', desc: 'Answer 5 consecutive questions about Superposition.' },
                 { title: 'React Refactor', tag: 'HARD', desc: 'Rewrite a class component to use useReducer.' },
               ].map((item, i) => (
-                <div key={i} className="p-4 bg-surface-lowest border border-white/5 rounded-xl hover:border-white/10 transition-all cursor-pointer group">
+                <article key={i} aria-label={`Challenge: ${item.title}`} tabIndex="0" className="p-4 bg-surface-lowest border border-white/5 rounded-xl hover:border-white/10 transition-all cursor-pointer group focus:outline-none focus:ring-2 focus:ring-primary-indigo">
                   <div className="flex justify-between mb-1">
                     <h4 className="font-semibold group-hover:text-primary-indigo transition-colors">{item.title}</h4>
                     <span className={clsx(
@@ -138,7 +138,7 @@ const Dashboard = ({ onNavigate }) => {
                     )}>{item.tag}</span>
                   </div>
                   <p className="text-xs text-on-surface/50">{item.desc}</p>
-                </div>
+                </article>
               ))}
             </div>
           </Card>
@@ -152,9 +152,9 @@ const Dashboard = ({ onNavigate }) => {
               <ArrowRight size={14} />
             </button>
           </Card>
-        </div>
+        </aside>
       </div>
-    </div>
+    </main>
   );
 };
 

@@ -40,7 +40,7 @@ const Session = ({ onNavigate, onNewSession }) => {
 
   if (!activeTopic) {
     return (
-      <div className="p-12 animate-in fade-in duration-700">
+      <main className="p-12 animate-in fade-in duration-700" aria-label="Session Library">
         <header className="mb-12">
           <h1 className="text-4xl font-bold mb-2">Session Library</h1>
           <p className="text-on-surface/50">Pick a concept from your twin's knowledge graph to continue your evolution.</p>
@@ -48,10 +48,11 @@ const Session = ({ onNavigate, onNewSession }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {graph.concepts.map(concept => (
-            <div 
+            <button 
               key={concept.title}
               onClick={() => setActiveTopic(concept.title)}
-              className="glass-card p-6 border-white/5 hover:border-primary-indigo/30 hover:bg-primary-indigo/5 cursor-pointer transition-all group"
+              aria-label={`Start session on ${concept.title}`}
+              className="text-left w-full glass-card p-6 border-white/5 hover:border-primary-indigo/30 hover:bg-primary-indigo/5 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-indigo"
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="p-3 rounded-xl bg-surface-highest group-hover:bg-primary-indigo/10 text-on-surface/40 group-hover:text-primary-indigo transition-colors">
@@ -71,18 +72,19 @@ const Session = ({ onNavigate, onNewSession }) => {
                   Continue <ChevronRight size={14} />
                 </button>
               </div>
-            </div>
+            </button>
           ))}
           
-          <div 
+          <button 
             onClick={onNewSession}
-            className="border-2 border-dashed border-white/5 rounded-3xl p-6 flex flex-col items-center justify-center text-on-surface/30 hover:text-on-surface/60 hover:border-white/10 transition-all cursor-pointer"
+            aria-label="Discover New Topic"
+            className="w-full h-full min-h-[200px] border-2 border-dashed border-white/5 rounded-3xl p-6 flex flex-col items-center justify-center text-on-surface/30 hover:text-on-surface/60 hover:border-white/10 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-indigo"
           >
              <Plus size={32} className="mb-4" />
              <span className="font-bold">Discover New Topic</span>
-          </div>
+          </button>
         </div>
-      </div>
+      </main>
     );
   }
 
@@ -189,7 +191,7 @@ const Session = ({ onNavigate, onNewSession }) => {
         </div>
 
         {/* Tutor Sidebar */}
-        <div className="w-96 bg-surface-lowest border-l border-white/5 flex flex-col">
+        <aside aria-label="Tutor Chat Sidebar" className="w-96 bg-surface-lowest border-l border-white/5 flex flex-col">
           <div className="p-6 border-b border-white/5 flex items-center gap-2">
             <Sparkles className="text-primary-indigo" size={18} />
             <h2 className="font-bold">Tutor Chat</h2>
@@ -230,7 +232,7 @@ const Session = ({ onNavigate, onNewSession }) => {
               </button>
             </div>
           </div>
-        </div>
+        </aside>
       </div>
 
       {/* Bottom Action Bar */}
