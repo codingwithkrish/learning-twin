@@ -24,10 +24,21 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB Connection Error:", err));
 
-// Routes (to be implemented)
+const path = require("path");
+
+// Routes
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/learn", require("./routes/learn.routes"));
 app.use("/api/progress", require("./routes/progress.routes"));
+
+// Serve Frontend (Production)
+const publicPath = path.join(__dirname, "../public");
+app.use(express.static(publicPath));
+
+app.get("*", (req, res) => {
+  if (req.path.startsWith("/api")) return res.status(404).json({ error: "Not found" });
+  res.sendFile(path.join(publicPath, "index.html"));
+});
 
 // Basic Health Check
 app.get("/health", (req, res) => res.status(200).json({ status: "ok" }));
