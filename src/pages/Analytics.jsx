@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { progressApi } from '../api';
 import Card from '../components/ui/Card';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
@@ -7,31 +8,33 @@ import {
 import { Zap, PieChart as PieIcon, TrendingUp, Download } from 'lucide-react';
 
 const Analytics = () => {
-  const learningData = [
-    { day: 'Mon', concepts: 12 },
-    { day: 'Tue', concepts: 18 },
-    { day: 'Wed', concepts: 15 },
-    { day: 'Thu', concepts: 32 },
-    { day: 'Fri', concepts: 22 },
-    { day: 'Sat', concepts: 28 },
-    { day: 'Sun', concepts: 35 },
-  ];
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const retentionData = [
-    { day: 1, rate: 100 },
-    { day: 5, rate: 85 },
-    { day: 10, rate: 70 },
-    { day: 15, rate: 82 },
-    { day: 20, rate: 75 },
-    { day: 25, rate: 88 },
-    { day: 30, rate: 80 },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await progressApi.getAnalytics();
+        setData(res.data);
+      } catch (error) {
+        console.error("Failed to fetch analytics:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const subjectData = [
-    { name: 'Computer Science', value: 45, color: '#6366F1' },
-    { name: 'Mathematics', value: 30, color: '#4edea3' },
-    { name: 'Design Theory', value: 25, color: '#ffb783' },
-  ];
+  if (loading || !data) {
+    return (
+      <div className="h-full flex items-center justify-center p-8">
+        <div className="w-10 h-10 border-4 border-primary-indigo/20 border-t-primary-indigo rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  const { learningData, retentionData, subjectData, topicsToRevisit } = data;
+
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
@@ -127,10 +130,7 @@ const Analytics = () => {
       <div className="space-y-4">
         <h3 className="text-xl font-bold">Topics to Revisit</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { title: 'Advanced CSS', recall: 32, icon: 'CSS' },
-            { title: 'Linear Algebra', recall: 48, icon: 'Σ' },
-          ].map(topic => (
+          {topicsToRevisit?.map(topic => (
             <Card key={topic.title} className="bg-surface-lowest hover:bg-surface-container transition-colors group">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4">

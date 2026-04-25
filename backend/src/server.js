@@ -30,6 +30,7 @@ const path = require("path");
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/learn", require("./routes/learn.routes"));
 app.use("/api/progress", require("./routes/progress.routes"));
+app.use("/api/chat", require("./routes/chat.routes"));
 
 // Serve Frontend (Production)
 const publicPath = path.join(__dirname, "../public");

@@ -1,9 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../components/ui/Card';
 import { Flame, Target, TrendingUp, Play, ArrowRight, Zap } from 'lucide-react';
 import { clsx } from 'clsx';
+import { progressApi } from '../api';
+import { useStore } from '../store/useStore';
 
-const Dashboard = () => {
+const Dashboard = ({ onNavigate }) => {
+  const { graph, setGraph, setActiveTopic } = useStore();
+  const [loading, setLoading] = useState(true);
+
+  const handleStartLearning = (topic) => {
+    setActiveTopic(topic);
+    onNavigate('sessions');
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await progressApi.getGraph();
+        setGraph(res.data);
+      } catch (err) {
+        console.error("Failed to fetch graph", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const concepts = graph?.concepts || [];
+  const averageMastery = concepts.length > 0 
+    ? Math.round(concepts.reduce((acc, c) => acc + c.masteryLevel, 0) / concepts.length)
+    : 0;
+  
+  const weakNodes = concepts.filter(c => c.isWeakNode);
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
       <header>
@@ -25,7 +55,7 @@ const Dashboard = () => {
 
         <Card title="CONCEPT MASTERY" icon={TrendingUp}>
           <div className="flex items-baseline gap-2 mt-2">
-            <span className="text-5xl font-bold text-secondary">64</span>
+            <span className="text-5xl font-bold text-secondary">{averageMastery}</span>
             <span className="text-lg text-on-surface/50 font-tech">%</span>
           </div>
           <p className="text-secondary text-xs mt-4 font-tech">+4.2% from last session</p>
@@ -33,8 +63,11 @@ const Dashboard = () => {
 
         <Card title="FOCUS TARGET" icon={Target}>
           <div className="flex flex-wrap gap-2 mt-2">
-            <span className="px-3 py-1 bg-primary-indigo/10 border border-primary-indigo/20 text-primary-indigo rounded-full text-xs font-tech">Quantum Mechanics</span>
-            <span className="px-3 py-1 bg-surface-highest rounded-full text-xs font-tech">React Hooks</span>
+            {weakNodes.length > 0 ? weakNodes.slice(0, 2).map(node => (
+              <span key={node.title} className="px-3 py-1 bg-error/10 border border-error/20 text-error rounded-full text-xs font-tech">{node.title}</span>
+            )) : (
+              <span className="px-3 py-1 bg-primary-indigo/10 border border-primary-indigo/20 text-primary-indigo rounded-full text-xs font-tech">All clear!</span>
+            )}
           </div>
           <p className="text-xs text-on-surface/50 mt-6 italic">Recommended: 75min Deep Dive</p>
         </Card>
@@ -54,7 +87,10 @@ const Dashboard = () => {
                 <p className="text-on-surface/70 mb-8 max-w-md">
                   Continue your module on <span className="text-white font-semibold">Advanced State Management</span> where you left off yesterday.
                 </p>
-                <button className="btn-primary flex items-center gap-2">
+                <button 
+                  onClick={() => handleStartLearning('Advanced State Management')}
+                  className="btn-primary flex items-center gap-2"
+                >
                   <span>Start Learning</span>
                   <Play size={18} fill="currentColor" />
                 </button>

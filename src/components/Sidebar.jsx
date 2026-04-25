@@ -13,7 +13,7 @@ import {
 import { useStore } from '../store/useStore';
 import { clsx } from 'clsx';
 
-const Sidebar = ({ activePage, setActivePage }) => {
+const Sidebar = ({ activePage, setActivePage, onNewSession }) => {
   const logout = useStore(state => state.logout);
   const user = useStore(state => state.user);
 
@@ -56,10 +56,15 @@ const Sidebar = ({ activePage, setActivePage }) => {
           </button>
         ))}
 
-        <button className="w-full flex items-center justify-center gap-2 mt-8 py-3 bg-primary-indigo text-white rounded-xl font-medium hover:shadow-lg hover:shadow-primary-indigo/30 transition-all">
+        <div className="px-4 mb-8">
+        <button 
+          onClick={onNewSession}
+          className="w-full py-4 bg-primary-indigo text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary-indigo/80 shadow-lg shadow-primary-indigo/20 transition-all active:scale-95"
+        >
           <Plus size={20} />
           <span>New Session</span>
         </button>
+      </div>
       </nav>
 
       {/* Footer Nav */}

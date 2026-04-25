@@ -3,6 +3,25 @@ const geminiService = require("./gemini.service");
 
 class AdaptiveService {
   /**
+   * Adds a new topic to the user's knowledge graph.
+   */
+  async addTopicToGraph(userId, topic) {
+    let graph = await KnowledgeGraph.findOne({ userId });
+    if (!graph) {
+      graph = new KnowledgeGraph({ userId, concepts: [] });
+    }
+
+    let concept = graph.concepts.find(c => c.title.toLowerCase() === topic.toLowerCase());
+    if (!concept) {
+      concept = { title: topic, masteryLevel: 0, confusionScore: 0, isWeakNode: false, relatedConcepts: [] };
+      graph.concepts.push(concept);
+      await graph.save();
+    }
+    
+    return graph;
+  }
+
+  /**
    * Updates the mastery level and confusion score after a session.
    */
   async updateProgress(userId, topic, sessionData) {

@@ -21,13 +21,15 @@ export const authApi = {
 
 export const learnApi = {
   getExplanation: (topic, level) => api.post('/learn/explain', { topic, level }),
-  getQuiz: (topic, masteryLevel) => api.post('/learn/quiz', { topic, masteryLevel }),
+  getQuiz: (topic, difficulty, numQuestions) => api.post('/learn/quiz', { topic, difficulty, numQuestions }),
 };
 
 export const progressApi = {
   getGraph: () => api.get('/progress/graph'),
   updateProgress: (topic, sessionData) => api.post('/progress/update', { topic, sessionData }),
   getRecommendations: () => api.get('/progress/recommendations'),
+  addTopic: (topic) => api.post('/progress/add-topic', { topic }),
+  getAnalytics: () => api.get('/progress/analytics'),
 };
 
 export default api;

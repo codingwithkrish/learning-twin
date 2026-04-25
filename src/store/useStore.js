@@ -8,11 +8,13 @@ export const useStore = create(
       token: null,
       graph: { concepts: [] },
       activeSession: null,
+      activeTopic: null,
       
       setUser: (user, token) => set({ user, token }),
-      logout: () => set({ user: null, token: null, graph: { concepts: [] } }),
+      logout: () => set({ user: null, token: null, graph: { concepts: [] }, activeTopic: null }),
       
-      setGraph: (graph) => set({ graph }),
+      setGraph: (graph) => set({ graph: { concepts: graph?.concepts || [], ...graph } }),
+      setActiveTopic: (activeTopic) => set({ activeTopic }),
       
       startSession: (topic) => set({ 
         activeSession: { 
@@ -26,7 +28,7 @@ export const useStore = create(
       
       updateConceptInGraph: (updatedConcept) => {
         const { graph } = get();
-        const concepts = [...graph.concepts];
+        const concepts = [...(graph?.concepts || [])];
         const index = concepts.findIndex(c => c.title === updatedConcept.title);
         
         if (index > -1) {

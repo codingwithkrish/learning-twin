@@ -1,17 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '../components/ui/Card';
 import { Network, Search, Filter, Info, ChevronRight, Zap, HelpCircle } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useStore } from '../store/useStore';
+import { progressApi } from '../api';
 
-const KnowledgeGraph = () => {
-  const [selectedNode, setSelectedNode] = useState('Neural Networks');
+const KnowledgeGraph = ({ onNavigate }) => {
+  const { graph, setGraph, setActiveTopic } = useStore();
+  const [selectedNode, setSelectedNode] = useState(null);
 
-  const nodes = [
-    { id: '1', title: 'Neural Networks', x: 50, y: 50, status: 'learning', mastery: 78 },
-    { id: '2', title: 'Backpropagation', x: 30, y: 30, status: 'confused', mastery: 42 },
-    { id: '3', title: 'Activation Functions', x: 70, y: 40, status: 'mastered', mastery: 95 },
-    { id: '4', title: 'Gradient Descent', x: 60, y: 80, status: 'confused', mastery: 35 },
-  ];
+  const handleDiveDeeper = () => {
+    if (selectedNode) {
+      setActiveTopic(selectedNode);
+      onNavigate('sessions');
+    }
+  };
+
+  const handleQuickQuiz = () => {
+    if (selectedNode) {
+      setActiveTopic(selectedNode);
+      onNavigate('quiz');
+    }
+  };
+
+  useEffect(() => {
+    const fetchGraph = async () => {
+      const res = await progressApi.getGraph();
+      setGraph(res.data);
+      if (res.data.concepts.length > 0) setSelectedNode(res.data.concepts[0].title);
+    };
+    fetchGraph();
+  }, []);
+
+  const concepts = graph?.concepts || [];
+  const nodes = concepts.map((c, i) => ({
+    ...c,
+    id: i.toString(),
+    x: 20 + (i * 20) % 60,
+    y: 20 + Math.floor(i / 3) * 20,
+    status: c.masteryLevel > 80 ? 'mastered' : c.confusionScore > 0.5 ? 'confused' : 'learning'
+  }));
+
+  const selectedConcept = concepts.find(c => c.title === selectedNode);
 
   return (
     <div className="h-screen flex animate-in slide-in-from-right duration-700">
@@ -104,7 +134,7 @@ const KnowledgeGraph = () => {
 
         <div>
           <span className="text-[10px] font-tech text-primary-indigo uppercase tracking-widest font-bold">Concept</span>
-          <h3 className="text-2xl font-bold mt-1">{selectedNode}</h3>
+          <h3 className="text-2xl font-bold mt-1">{selectedNode || 'Select a concept'}</h3>
         </div>
 
         <Card className="border-primary-indigo/20 bg-primary-indigo/5 p-4">
@@ -113,24 +143,26 @@ const KnowledgeGraph = () => {
             <span className="text-xs font-bold uppercase tracking-tighter">AI Insight</span>
           </div>
           <p className="text-xs text-on-surface/80 leading-relaxed italic">
-            "Neural networks are computational models inspired by the human brain's structure. You've demonstrated strong recall on activation functions but struggle with the chain rule in backpropagation."
+            {selectedConcept?.confusionScore > 0.4 
+              ? `You are currently struggling with ${selectedNode}. Your confusion score is high (${Math.round(selectedConcept.confusionScore * 100)}%). I suggest a simplified review.` 
+              : `Your mastery of ${selectedNode} is solid at ${selectedConcept?.masteryLevel}%. You're ready for more advanced challenges.`}
           </p>
         </Card>
 
         <div>
           <div className="flex justify-between items-end mb-2">
             <span className="text-xs text-on-surface/60">Current Mastery</span>
-            <span className="text-sm font-bold text-secondary">78%</span>
+            <span className="text-sm font-bold text-secondary">{selectedConcept?.masteryLevel}%</span>
           </div>
           <div className="w-full h-1.5 bg-surface-highest rounded-full overflow-hidden">
-            <div className="h-full bg-secondary w-[78%]" />
+            <div className="h-full bg-secondary transition-all duration-500" style={{ width: `${selectedConcept?.masteryLevel}%` }} />
           </div>
         </div>
 
         <div className="space-y-4">
           <h4 className="text-[10px] font-tech text-on-surface/30 uppercase tracking-widest">Related Concepts</h4>
           <div className="flex flex-wrap gap-2">
-            {['Perceptrons', 'Deep Learning', 'Gradient Clipping', 'Hyperparameters'].map(tag => (
+            {selectedConcept?.relatedConcepts.map(tag => (
               <span key={tag} className="px-3 py-1.5 bg-surface-highest rounded-lg text-xs hover:bg-surface-bright cursor-pointer transition-colors">
                 {tag}
               </span>
@@ -139,11 +171,17 @@ const KnowledgeGraph = () => {
         </div>
 
         <div className="mt-auto space-y-3">
-          <button className="w-full btn-primary flex items-center justify-center gap-2">
+          <button 
+            onClick={handleDiveDeeper}
+            className="w-full btn-primary flex items-center justify-center gap-2"
+          >
             <Network size={18} />
             <span>Dive Deeper</span>
           </button>
-          <button className="w-full btn-secondary flex items-center justify-center gap-2">
+          <button 
+            onClick={handleQuickQuiz}
+            className="w-full btn-secondary flex items-center justify-center gap-2"
+          >
             <HelpCircle size={18} />
             <span>Quick Quiz</span>
           </button>

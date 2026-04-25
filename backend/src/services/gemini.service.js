@@ -5,7 +5,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 class GeminiService {
   constructor() {
-    this.model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    this.model = genAI.getGenerativeModel({ model: "models/gemini-2.0-flash" });
   }
 
   /**
@@ -48,28 +48,24 @@ class GeminiService {
   /**
    * Generates adaptive quiz questions based on the user's mastery.
    */
-  async generateQuiz(topic, masteryLevel) {
+  async generateQuiz(topic, difficulty, numQuestions) {
     const prompt = `
-      Generate a set of 3 challenging quiz questions for the topic "${topic}".
-      Current user mastery: ${masteryLevel}%.
+      Generate a set of ${numQuestions} quiz questions for the topic "${topic}".
+      The difficulty level should be ${difficulty}.
       
-      Questions should be:
-      1. Conceptual (True/False or Multiple Choice)
-      2. Problem-solving (Scenario-based)
-      3. Deep reasoning (Open-ended)
+      Questions must be Multiple Choice Questions (MCQ).
       
-      Format as JSON:
+      Format strictly as JSON:
       {
         "questions": [
           {
             "id": "q1",
             "type": "mcq",
             "question": "...",
-            "options": ["A", "B", "C", "D"],
-            "correct_answer": "...",
-            "difficulty": "number 1-10"
-          },
-          ...
+            "options": ["Option A text", "Option B text", "Option C text", "Option D text"],
+            "correct_answer": "Option A text", 
+            "difficulty": "${difficulty}"
+          }
         ]
       }
     `;
@@ -80,7 +76,23 @@ class GeminiService {
       return JSON.parse(response.text().replace(/```json/g, "").replace(/```/g, ""));
     } catch (error) {
       console.error("Gemini Quiz Error:", error);
-      throw new Error("Failed to generate quiz");
+      console.log("Using fallback mock data due to API failure/rate-limit.");
+
+      const mockQuestions = [];
+      const safeNum = Math.min(numQuestions || 5, 20); // Cap at 20
+
+      for (let i = 0; i < safeNum; i++) {
+        mockQuestions.push({
+          id: `mock-${i}`,
+          type: "mcq",
+          question: `[MOCK] Which of the following is a key concept in ${topic}? (Question ${i + 1}, ${difficulty} difficulty)`,
+          options: ["Correct Answer", "Distractor A", "Distractor B", "Distractor C"],
+          correct_answer: "Correct Answer",
+          difficulty: difficulty
+        });
+      }
+
+      return { questions: mockQuestions };
     }
   }
 
